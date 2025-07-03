@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NanoDrop Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #0077cc;
+    }
+    #alert {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 10px auto;
+      padding: 10px;
+      width: 80%;
+      border-radius: 10px;
+    }
+    canvas {
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌊 NanoDrop Live Dashboard</h1>
+  <p style="max-width:600px; margin: 0 auto;">
+    NanoDrop is a zero-power water filter that combines a silver nanoparticle-coated cloth and activated carbon to remove bacteria and chemicals from contaminated water.
+  </p>
+
+  <canvas id="sensorChart" width="800" height="400"></canvas>
+  <div id="alert">⏳ Waiting for data...</div>
+
+  <script>
+    const channelID = 2996447;
+    const apiKey = "687IF99TL59I7YKJ";
+    const fieldTDS = 1;
+    const fieldTurbidity = 2;
+
+    const labels = [];
+    const tdsData = [];
+    const turbData = [];
+
+    const ctx = document.getElementById('sensorChart').getContext('2d');
+    const sensorChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'TDS (NTU)',
+            data: tdsData,
+            borderColor: 'blue',
+            fill: false
+          },
+          {
+            label: 'Turbidity (PPM)',
+            data: turbData,
+            borderColor: 'green',
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        animation: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    async function fetchData() {
+      try {
+        const url = `https://api.thingspeak.com/channels/${channelID}/feeds.json?results=1&api_key=${apiKey}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        const feed = data.feeds[0];
+
+        const tds = parseFloat(feed[`field${fieldTDS}`]);
+        const turb = parseFloat(feed[`field${fieldTurbidity}`]);
+        const time = new Date(feed.created_at).toLocaleTimeString();
+
+        if (labels.length >= 20) {
+          labels.shift();
+          tdsData.shift();
+          turbData.shift();
+        }
+
+        labels.push(time);
+        tdsData.push(tds);
+        turbData.push(turb);
+        sensorChart.update();
+
+        const alertBox = document.getElementById("alert");
+        if (tds > 1000 || turb > 500) {
+          alertBox.innerText = "⚠️ Water quality low — Change NanoDrop filter!";
+          alertBox.style.background = "#ffe6e6";
+          alertBox.style.color = "red";
+        } else {
+          alertBox.innerText = "✅ Water quality normal.";
+          alertBox.style.background = "#e6ffe6";
+          alertBox.style.color = "green";
+        }
+      } catch (err) {
+        document.getElementById("alert").innerText = "⚠️ Error fetching data.";
+        console.error(err);
+      }
+    }
+
+    // Fetch immediately and then every 20 sec
+    fetchData();
+    setInterval(fetchData, 20000);
+  </script>
+</body>
+</html>
