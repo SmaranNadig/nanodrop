@@ -186,13 +186,28 @@
         turbChart.update();
 
         const statusBox = document.getElementById("status");
-        if (tds > 1000 || turb > 5) {
-          statusBox.className = "status-box danger";
-          statusBox.innerText = "⚠️ Water quality is poor — please replace NanoDrop filter.";
+
+        // Determine quality message
+        let message = "✅ Water is safe to drink.";
+        let className = "status-box safe";
+
+        if (tds > 500 || turb > 5) {
+          message = "❌ Water quality is poor — Replace NanoDrop filter.";
+          className = "status-box danger";
+        } else if (tds > 300) {
+          message = "⚠️ Water quality okay but could be better.";
+          className = "status-box safe";
+        } else if (tds > 150) {
+          message = "✔️ Good quality water.";
+          className = "status-box safe";
         } else {
-          statusBox.className = "status-box safe";
-          statusBox.innerText = "✅ Water is safe to drink.";
+          message = "✅ Excellent drinking water.";
+          className = "status-box safe";
         }
+
+        statusBox.className = className;
+        statusBox.innerText = message;
+
       } catch (error) {
         document.getElementById("status").innerText = "⚠️ Error fetching data";
         document.getElementById("status").className = "status-box danger";
