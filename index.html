@@ -36,6 +36,10 @@
 
   <canvas id="sensorChart" width="800" height="400"></canvas>
   <div id="alert">⏳ Waiting for data...</div>
+  <div id="alertBox" style="display:none; padding: 10px; background-color: #ffcccc; border: 2px solid red; color: #660000; font-weight: bold; border-radius: 10px; margin: 20px auto; width: 80%; text-align: center;">
+  ⚠️ Water quality is poor! Please change your NanoDrop filter.
+</div>
+
 
   <script>
     const channelID = 2996447;
@@ -120,5 +124,35 @@
     fetchData();
     setInterval(fetchData, 20000);
   </script>
+  <script>
+  const channelID = 2996447;
+  const apiKey = '687IF99TL59I7YKJ';
+
+  async function checkWaterQuality() {
+    const url = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${apiKey}&results=1`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      const latest = data.feeds[0];
+      const tds = parseFloat(latest.field1);
+      const turb = parseFloat(latest.field2);
+
+      if (tds > 1000 || turb > 500) {
+        document.getElementById("alertBox").style.display = "block";
+      } else {
+        document.getElementById("alertBox").style.display = "none";
+      }
+    } catch (err) {
+      console.error("Error checking quality:", err);
+    }
+  }
+
+  // Check every 15 seconds
+  checkWaterQuality();
+  setInterval(checkWaterQuality, 15000);
+</script>
+
 </body>
 </html>
