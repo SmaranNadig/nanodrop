@@ -7,16 +7,17 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --primary: #0066cc;
-      --safe-green: #d4f8d4;
-      --danger-red: #ffe5e5;
-      --neutral-gray: #f0f0f0;
-      --text: #333;
+      --primary: #f9c74f;         /* Yellowish theme */
+      --safe-green: #80ed99;
+      --danger-red: #ff6b6b;
+      --background-dark: #1e1e2f;
+      --container-dark: #2e2e42;
+      --text: #ffffff;
     }
 
     body {
       font-family: "Segoe UI", sans-serif;
-      background: var(--neutral-gray);
+      background: var(--background-dark);
       color: var(--text);
       margin: 0;
       padding: 0;
@@ -24,7 +25,7 @@
 
     header {
       background: var(--primary);
-      color: white;
+      color: #1e1e2f;
       padding: 20px;
       text-align: center;
     }
@@ -56,12 +57,12 @@
 
     .safe {
       background-color: var(--safe-green);
-      color: #156c15;
+      color: #003300;
     }
 
     .danger {
       background-color: var(--danger-red);
-      color: #a10000;
+      color: #fff;
     }
 
     .grid {
@@ -71,10 +72,10 @@
     }
 
     .chart-container {
-      background: white;
+      background: var(--container-dark);
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     }
 
     canvas {
@@ -85,7 +86,7 @@
     footer {
       text-align: center;
       font-size: 0.9em;
-      color: #777;
+      color: #aaa;
       margin-top: 30px;
     }
   </style>
@@ -134,8 +135,8 @@
         datasets: [{
           label: 'TDS (ppm)',
           data: tdsData,
-          borderColor: 'blue',
-          backgroundColor: 'rgba(0,0,255,0.1)',
+          borderColor: '#4dabf7',
+          backgroundColor: 'rgba(77, 171, 247, 0.2)',
           fill: true
         }]
       },
@@ -153,8 +154,8 @@
         datasets: [{
           label: 'Turbidity (NTU)',
           data: turbData,
-          borderColor: 'green',
-          backgroundColor: 'rgba(0,255,0,0.1)',
+          borderColor: '#69db7c',
+          backgroundColor: 'rgba(105, 219, 124, 0.2)',
           fill: true
         }]
       },
