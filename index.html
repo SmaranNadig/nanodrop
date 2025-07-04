@@ -194,7 +194,7 @@
         if (tds > 500 || turb > 8) {
           message = "❌ Water quality is poor — Replace NanoDrop filter.";
           className = "status-box danger";
-        } else if (tds > 300) {
+        } else if (tds > 300 || turb>5) {
           message = "⚠️ Water quality okay but could be better.";
           className = "status-box safe";
         } else if (tds > 150) {
